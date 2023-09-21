@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "tsc && node ./dist/index.js",
     "dev": "nodemon -L ./src/index.ts",
     "build": "tsc",
     "setup-db": "docker run --name tkanban-pg -e POSTGRES_PASSWORD=admin -d -v ${PWD}/postgres:/var/lib/postgresql/data -p 5432:5432 --restart unless-stopped postgres",
