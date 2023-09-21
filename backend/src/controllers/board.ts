@@ -15,11 +15,10 @@ interface Column {
 interface Board {
   id: string;
   name: string;
-  columns: Column[] | []
+  columns: Column[] | [];
 }
 
-// TODO Handle the errors correctly
-class BoardController {
+const BoardController = {
   getBoard(req: Request, res: Response) {
     if (!req.params.id) return;
 
@@ -30,12 +29,11 @@ class BoardController {
         { id: '1', name: 'To do', tasks: [] },
         { id: '2', name: 'Doing', tasks: [] },
         { id: '3', name: 'Done', tasks: [] },
-      ]
-    }
+      ],
+    };
 
-    res.send(data)
-  }
-
+    res.send(data);
+  },
   editBoard(req: Request, res: Response) {
     if (!req.params.id) return;
 
@@ -46,11 +44,11 @@ class BoardController {
         { id: '1', name: 'To do', tasks: [] },
         { id: '2', name: 'Doing', tasks: [] },
         { id: '3', name: 'Done', tasks: [] },
-      ]
-    }
+      ],
+    };
 
     res.send(data);
-  }
-}
+  },
+};
 
-export default new BoardController();
+export default BoardController;

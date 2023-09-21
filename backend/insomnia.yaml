@@ -1,0 +1,77 @@
+_type: export
+__export_format: 4
+__export_date: 2023-09-21T16:28:32.886Z
+__export_source: insomnia.desktop.app:v2023.5.8
+resources:
+  - _id: req_aefa1beeeb334bb1ab1b89e153a32ccd
+    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+    modified: 1695313642965
+    created: 1695313626454
+    url: http://localhost:3001/board/1
+    name: Get board
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695313626454
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+    parentId: null
+    modified: 1695311918285
+    created: 1695311918285
+    name: t-kanban api
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_992b4c19496f4d90b91f8f3c94f3fe95
+    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+    modified: 1695313671896
+    created: 1695313646053
+    url: http://localhost:3001/board/1
+    name: Update board
+    description: ""
+    method: PUT
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695313626354
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_e09e4d0db84bdfd6b5390e12cbaaebad21c155aa
+    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+    modified: 1695311918289
+    created: 1695311918289
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1695311918289
+    _type: environment
+  - _id: jar_e09e4d0db84bdfd6b5390e12cbaaebad21c155aa
+    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+    modified: 1695311918289
+    created: 1695311918289
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar

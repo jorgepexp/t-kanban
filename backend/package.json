@@ -7,14 +7,17 @@
     "start": "tsc && node ./dist/index.js",
     "dev": "nodemon -L ./src/index.ts",
     "build": "tsc",
-    "setup-db": "docker run --name tkanban-pg -e POSTGRES_PASSWORD=admin -d -v ${PWD}/postgres:/var/lib/postgresql/data -p 5432:5432 --restart unless-stopped postgres",
-    "connect-db": "docker exec -it tkanban-pg bash",
-    "backup-db": "docker exec -it tkanban-pg pg_dump -U Giorgio --column-inserts --data-only tkanban backup_data.sql"
+    "up-db": "docker start tkanban_pg || docker run --name tkanban_pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres  -e POSTGRES_DB=tkanban -d -v ${PWD}/postgres:/var/lib/postgresql/data -p 5432:5432 postgres",
+    "stop-db": "docker stop tkanban_pg",
+    "down-db": "yarn stop-db && docker rm tkanban_pg",
+    "connect-db": "docker exec -it tkanban_pg bash",
+    "backup-db": "docker exec -it tkanban_pg pg_dump -U Giorgio --column-inserts --data-only tkanban backup_data.sql"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "5.2.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "prisma": "^5.2.0",
@@ -24,6 +27,7 @@
     "@types/express": "^4.17.17",
     "@types/node": "^20.6.0",
     "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
