@@ -1,31 +1,37 @@
-type Task = {
-  id: string
-  name: string
-}
+export type Task = {
+	id: number;
+	name: string;
+};
 
-export type Column = {
-  id: string
-  name: string
-  tasks: Task[]
-}
+export type State = {
+	id: number;
+	name: string;
+	tasks: Task[];
+};
 
 export type Board = {
-  id: string
-  name: string
-  columns: Column[]
-}
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+	id: number;
+	name: string;
+	states: State[];
+};
 
 const Api = {
-  fetchBoard: async (id: string): Promise<Board> => {
-    const board = await fetch(`http://localhost:3001/board/${id}`)
-    return board.json();
-  },
-  async saveBoard(board: Board) {
-    await sleep(100)
-    console.log('// TODO update en base de datos', board)
-  }
-}
+	async fetchBoard(id: number): Promise<Board> {
+		const board = await fetch(`http://localhost:3001/api/boards/${id}`);
+		return board.json();
+	},
+	async saveBoard(board: Board) {
+		const updatedBoard = await fetch(
+			`http://localhost:3001/api/boards/${board.id}`,
+			{
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(board),
+			}
+		);
 
-export default Api
+		return updatedBoard.json();
+	},
+};
+
+export default Api;

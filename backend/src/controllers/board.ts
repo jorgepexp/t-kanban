@@ -50,7 +50,7 @@ const BoardController = {
     if (!req.params.id) return;
     const id = Number(req.params.id);
 
-    await prisma.project.update({
+    const project = await prisma.project.update({
       where: {
         id,
       },
@@ -100,7 +100,22 @@ const BoardController = {
         });
       }
     }
-    res.status(200).send(req.body);
+
+    const updatedStates = await prisma.state.findMany({
+      where: {
+        projectId: id,
+      },
+      include: {
+        tasks: true,
+      },
+    });
+
+    const updatedProject = {
+      ...project,
+      states: [...updatedStates],
+    };
+
+    res.status(200).send(updatedProject);
   },
 };
 

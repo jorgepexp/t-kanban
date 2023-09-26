@@ -1,9 +1,10 @@
 import { Button, Input } from "@nextui-org/react";
-import { Column } from "src/lib/api";
+import { State, Task } from "src/lib/api";
 
-type ColumnProps = Column & {
-	onColumnNameChange: (id: string, name: string) => void;
-	onTaskAdd: (id: string, name: string) => void;
+type ColumnProps = State & {
+	onColumnNameChange: (id: number, name: string) => void;
+	onTaskAdd: (id: number, name: string) => void;
+	tasks: Task[];
 };
 
 const CARD_WIDTH = "200px";
@@ -25,9 +26,9 @@ const Column = (props: ColumnProps) => {
 	return (
 		<div
 			key={props.id}
-			className={`p-2 min-h-[${CARD_HEIGHT}] min-w-[${CARD_WIDTH}] max-w-[${CARD_WIDTH}] rounded-lg border-solid border-1 border-green-500 bg-stone`}
+			className={`p-3 min-h-[${CARD_HEIGHT}] min-w-[${CARD_WIDTH}] max-w-[${CARD_WIDTH}] rounded-lg border-solid border-1 border-violet-700 bg-stone`}
 		>
-			<div className="rounded-md">
+			<div className="rounded-md mb-2">
 				<Input
 					variant="bordered"
 					placeholder="Example: To do"
@@ -36,17 +37,23 @@ const Column = (props: ColumnProps) => {
 				/>
 			</div>
 
-			<ul>
+			<ul className="flex flex-col gap-2">
 				{props.tasks.map((task) => (
-					<li key={task.id}>{task.name}</li>
+					<div
+						className="bg-sky-900 rounded-sm p-1 hover:bg-sky-800 cursor-pointer"
+						key={task.id}
+					>
+						<li>{task.name}</li>
+					</div>
 				))}
 			</ul>
 
 			<Button
-				variant="light"
+				variant="ghost"
 				onClick={handleAddTaskClick}
+				className="mt-2"
 			>
-				Añadir tarea
+				+ Añadir tarea
 			</Button>
 		</div>
 	);

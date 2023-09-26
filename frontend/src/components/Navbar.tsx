@@ -9,43 +9,44 @@ import {
 	Link,
 	Button,
 } from "@nextui-org/react";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import CreateBoardButton from "@/components/CreateBoardButton";
 
 export default function App() {
 	return (
-		<Navbar className="border-b-2 border-purple-600 mb-5">
+		<Navbar className="border-b-1 border-indigo-950 mb-5 bg-indigo-900">
 			<NavbarBrand>
-				<p className="font-bold text-inherit">tKanban</p>
+				<Link
+					color="foreground"
+					href="/"
+					className="font-bold text-inherit text-xl "
+				>
+					tKanban
+				</Link>
 			</NavbarBrand>
 			<NavbarContent
 				className="hidden sm:flex gap-4"
 				justify="center"
 			>
-				{/* TODO Add real routes */}
 				<NavbarItem isActive>
 					<Link
 						color="foreground"
 						href="boards"
 					>
-						<p className="mr-3">Añade un tablero</p>
-						{/* TODO Añadir icono */}
-						<CreateBoardButton />
+						Tableros
 					</Link>
 				</NavbarItem>
-				<NavbarItem isActive>
-					<Link
-						color="foreground"
-						href="boards"
+				<NavbarItem>
+					<Button
+						color="secondary"
+						variant="ghost"
 					>
-						Boards
-					</Link>
+						Añade un tablero +
+					</Button>
 				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify="end">
-				<NavbarItem className="hidden lg:flex">
+				{/* <NavbarItem className="hidden lg:flex">
 					<ThemeSwitcher />
-				</NavbarItem>
+				</NavbarItem> */}
 				<NavbarItem className="hidden lg:flex">
 					<Link href="/login">Login</Link>
 				</NavbarItem>
