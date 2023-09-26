@@ -1,94 +1,88 @@
-import { useDebounce } from "@uidotdev/usehooks";
-import { useEffect, useState, useCallback } from "react";
-import Api, { Board } from "src/lib/api";
+import { useDebounce } from '@uidotdev/usehooks'
+import { useEffect, useState, useCallback } from 'react'
+import Api, { Project } from 'src/lib/api'
 
 export default function useBoard(boardId: number) {
-	const [error, setError] = useState<Error>();
-	const [board, setBoard] = useState<Board>();
-	const [isLoading, setIsLoading] = useState(true);
-	const debouncedBoard = useDebounce(board, 100);
+  const [error, setError] = useState<Error>()
+  const [board, setBoard] = useState<Project>()
+  const [isLoading, setIsLoading] = useState(true)
+  const debouncedBoard = useDebounce(board, 100)
 
-	const fetchBoard = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			const board = await Api.fetchBoard(boardId);
-			setBoard(board);
-			setIsLoading(false);
-		} catch (error) {
-			setIsLoading(false);
-			setError(error as Error);
-		}
-	}, [boardId]);
+  const fetchBoard = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const board = await Api.fetchBoard(boardId)
+      setBoard(board)
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+      setError(error as Error)
+    }
+  }, [boardId])
 
-	useEffect(() => {
-		fetchBoard();
-	}, [fetchBoard]);
+  useEffect(() => {
+    fetchBoard()
+  }, [fetchBoard])
 
-	useEffect(() => {
-		if (!debouncedBoard) return;
-		Api.saveBoard(debouncedBoard);
-	}, [debouncedBoard]);
+  useEffect(() => {
+    if (!debouncedBoard) return
+    Api.saveBoard(debouncedBoard)
+  }, [debouncedBoard])
 
-	function setColumnName(columnId: number, name: string) {
-		setBoard((board) => {
-			if (board === undefined) return;
+  function setColumnName(columnUUID: string, name: string) {
+    setBoard((board) => {
+      if (board === undefined) return
 
-			return {
-				...board,
-				states: board.states.map((column) => {
-					if (column.id !== columnId) return column;
-					return { ...column, name };
-				}),
-			};
-		});
-	}
+      const state = board.states.find((state) => state.uuid === columnUUID)
 
-	function setName(name: string) {
-		setBoard((board) => board && { ...board, name });
-	}
+      if (state?.id === undefined) {
+        throw new Error('Missing column')
+      }
 
-	function addColumn(name: string) {
-		if (!board) return;
-		setBoard(
-			(board) =>
-				board && {
-					...board,
-					states: [
-						...board.states,
-						{ name, id: -1, tasks: [], projectId: board?.id },
-					],
-				}
-		);
-	}
+      return {
+        ...board,
+        states: board.states.map(({ id }) => (state.id === id ? { ...state, name } : state)),
+      }
+    })
+  }
 
-	function addColumnTask(columnId: number, name: string) {
-		setBoard((board) => {
-			if (board === undefined) return;
+  function setName(name: string) {
+    setBoard((board) => board && { ...board, name })
+  }
 
-			return {
-				...board,
-				states: board.states.map((column) => {
-					if (column.id !== columnId) return column;
+  function addColumn(name: string) {
+    if (!board) return
+    setBoard((board) => board && { ...board, states: [...board.states, { name, uuid: crypto.randomUUID() }] })
+  }
 
-					return {
-						...column,
-						tasks: [
-							...column.tasks,
-							{ name, id: -1, stateId: columnId, projectId: board.id },
-						],
-					};
-				}),
-			};
-		});
-	}
+  function addColumnTask(columnUUID: string, name: string) {
+    setBoard((board) => {
+      if (!board) return
 
-	return {
-		data: board as Board,
-		error,
-		isLoading,
-		setColumnName,
-		setName,
-		addColumn,
-		addColumnTask,
-	};
+      const state = board.states.find((state) => state.uuid === columnUUID)
+
+      return {
+        ...board,
+        tasks: [
+          ...board.tasks,
+          {
+            name,
+            uuid: crypto.randomUUID(),
+            stateUUID: columnUUID,
+            stateId: state?.id,
+          },
+        ],
+      }
+    })
+  }
+
+  return {
+    data: board as Project,
+    error,
+    isLoading,
+    setColumnName,
+    setName,
+    addColumn,
+    addColumnTask,
+  }
 }

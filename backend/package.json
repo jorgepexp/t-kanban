@@ -7,7 +7,7 @@
     "start": "tsc && node ./dist/index.js",
     "dev": "nodemon -L ./src/index.ts",
     "build": "tsc",
-    "up-db": "docker start tkanban_pg || docker run --name tkanban_pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=tkanban -d -v /postgres:/var/lib/postgresql/data:Z -p 5432:5432 postgres",
+    "up-db": "docker start tkanban_pg || docker run --name tkanban_pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=tkanban -d -v postgres:/var/lib/postgresql/data -p 5432:5432 postgres",
     "stop-db": "docker stop tkanban_pg",
     "down-db": "yarn stop-db && docker rm tkanban_pg",
     "connect-db": "docker exec -it tkanban_pg bash",
