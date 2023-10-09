@@ -39,14 +39,11 @@ export default function App() {
 						color="secondary"
 						variant="ghost"
 					>
-						Añade un tablero +
+						+ Añade un tablero
 					</Button>
 				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify="end">
-				{/* <NavbarItem className="hidden lg:flex">
-					<ThemeSwitcher />
-				</NavbarItem> */}
 				<NavbarItem className="hidden lg:flex">
 					<Link href="/login">Login</Link>
 				</NavbarItem>

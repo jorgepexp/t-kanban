@@ -1,52 +1,108 @@
 export type Project = {
-  id: number
-  uuid: string
-  name: string
-  tasks: Task[]
-  states: TaskState[]
-}
+	id: number;
+	uuid: string;
+	name: string;
+	tasks: Task[];
+	states: TaskState[];
+};
 
 export type Task = {
-  id?: number
-  uuid: string
-  name: string
-  stateUUID: string
-  stateId?: number
-}
+	id?: number;
+	uuid: string;
+	name: string;
+	stateUUID: string;
+	stateId?: number;
+};
 
 export type TaskState = {
-  id?: number
-  uuid: string
-  name: string
-}
+	id?: number;
+	uuid: string;
+	name: string;
+};
+
+const BASE_URL = "http://localhost:3001";
 
 const Api = {
-  async fetchBoard(id: number): Promise<Project> {
-    const response = await fetch(`http://localhost:3001/api/projects/${id}`)
+	async createProject(name: string) {
+		const response = await fetch(`http://localhost:3001/api/projects/`, {
+			method: "POST",
+			body: JSON.stringify({ name }),
+		});
+	},
+	async fetchProject(id: number): Promise<Project> {
+		const response = await fetch(`${BASE_URL}/api/projects/${id}`);
 
-    const json = (await response.json()) as Project
+		const json: Project = await response.json();
 
-    json.uuid = crypto.randomUUID()
-    json.states = json.states.map((state) => ({ ...state, uuid: crypto.randomUUID() }))
-    json.tasks = json.tasks.map((task) => ({
-      ...task,
-      uuid: crypto.randomUUID(),
-      stateUUID: json.states.find((state) => (state.id as Number) === (task.stateId as Number))?.uuid as string,
-    }))
+		json.uuid = crypto.randomUUID();
+		json.states = json.states.map((state) => ({
+			...state,
+			uuid: crypto.randomUUID(),
+		}));
+		json.tasks = json.tasks.map((task) => ({
+			...task,
+			uuid: crypto.randomUUID(),
+			stateUUID: json.states.find((state) => state.id === task.stateId)
+				?.uuid as string,
+		}));
 
-    console.log(json)
+		console.log("Fetched project", json);
 
-    return json
-  },
-  async saveBoard(board: Project) {
-    const updatedBoard = await fetch(`http://localhost:3001/api/projects/${board.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(board),
-    })
+		return json;
+	},
+	async saveProject(project: Project) {
+		const updatedProject = await fetch(
+			`${BASE_URL}/api/projects/${project.id}`,
+			{
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(project),
+			}
+		);
 
-    return updatedBoard.json()
-  },
-}
+		return updatedProject.json();
+	},
+	async updateProjectName(projectId: number, name: string) {
+		await fetch(`${BASE_URL}/api/projects/${projectId}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ name }),
+		});
+	},
 
-export default Api
+	async createTaskState(projectId: number, name: string) {
+		await fetch(`${BASE_URL}/api/projects/${projectId}/states`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ name }),
+		});
+	},
+	async updateTaskState(projectId: number, stateId: number, name: string) {
+		const response = await fetch(
+			`${BASE_URL}/api/projects/${projectId}/states`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ name, id: stateId }),
+			}
+		);
+
+		return response;
+	},
+
+	async createTask(projectId: number, stateId: number, name: string) {
+		const response = await fetch(`${BASE_URL}/api/projects/${projectId}/task`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ name, stateId }),
+		});
+
+		return response;
+	},
+};
+
+export default Api;
