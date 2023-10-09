@@ -1,8 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
-
-import BoardController from './controllers/board';
-import { HTTPException } from './lib/exceptions';
+import ProjectController from './controllers/project';
 import { globalErrorHandler } from './lib/error-handler';
 
 const app = express();
@@ -16,16 +14,36 @@ const asyncHandler =
   (req: Request, res: Response, next: NextFunction) =>
     controller(req, res).catch(next);
 
-app.get('/api/projects/:id', asyncHandler(BoardController.getBoard));
+// Project routes
+app.get('/api/projects/:id', asyncHandler(ProjectController.getProject));
+app.post('/api/projects', ProjectController.createProject);
+app.put('/api/projects/:id', asyncHandler(ProjectController.updateProjectName));
+app.delete('/api/projects/:id', asyncHandler(ProjectController.deleteProject));
 
-// app.put('/api/projects/:id', BoardController.editBoard);
+// States routes
+app.post(
+  '/api/projects/:id/states',
+  asyncHandler(ProjectController.createTaskState)
+);
+app.put(
+  '/api/projects/:id/states',
+  asyncHandler(ProjectController.updateTaskState)
+);
+app.delete(
+  '/api/projects/states/:id',
+  asyncHandler(ProjectController.deleteTaskState)
+);
 
-// Crear "columna": POST /api/projects/:projectId/states { name: string }
-// Crear tarea: POST /api/projects/:project/task -> { name: string, stateId: number }
-// Actualizar nombre tablero: PUT /api/projects/:id
-// Actualizar columna: PUT /api/projects/:projectId/states/:stateId
-
-app.post('/api/projects', BoardController.createBoard);
+// Task routes
+app.post('/api/projects/:id/task', asyncHandler(ProjectController.createTask));
+app.put(
+  '/api/projects/:id/states/:stateId',
+  asyncHandler(ProjectController.updateTask)
+);
+app.delete(
+  '/api/projects/:id/task',
+  asyncHandler(ProjectController.deleteTask)
+);
 
 app.use(globalErrorHandler);
 
