@@ -1,65 +1,120 @@
-'use client'
+"use client";
 
-import Column from '@/components/Column'
-import { Button, Input } from '@nextui-org/react'
-import useBoard from 'src/hooks/useBoard'
+import Column from "@/components/Column";
+import {
+	Button,
+	Input,
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
+	ModalFooter,
+	useDisclosure,
+} from "@nextui-org/react";
+import { useState } from "react";
+import useProject from "src/hooks/useProject";
 
 const Page = () => {
-  // TODO Remember to change this fixed value
-  const board = useBoard(1)
+	// TODO Remember to change this fixed value
+	const project = useProject(1);
+	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const [taskStateName, setTaskStateName] = useState("");
 
-  if (board.isLoading) {
-    return <p>Loading...</p>
-  }
+	if (project.isLoading) return <p>Loading...</p>;
 
-  if (board.error) {
-    // TODO Añadir botón para crear tablero
-    return <p>Error loading board</p>
-  }
+	if (project.error) return <p>Error loading project</p>;
 
-  function addColumnHandler() {
-    // TODO Change with a modal
-    const columnName = prompt('Name')
-    if (!columnName) return
-    board.addColumn(columnName)
-  }
+	function handleAddColumn(closeModalHandler: () => void) {
+		project.addColumn(taskStateName);
+		closeModalHandler();
+		setTaskStateName("");
+	}
 
-  const { name, states: columns } = board.data
+	const { name, states: columns } = project.data;
 
-  return (
-    <main className='h-[100vh]'>
-      <div className='flex justify-center mb-8'>
-        <Input
-          className='w-full m-auto'
-          classNames={{
-            input: 'text-2xl font-medium hover:bg-transparent text-center',
-            inputWrapper: 'bg-transparent text-lg font-medium',
-          }}
-          placeholder={'Example: Projects board'}
-          value={name}
-          size='md'
-          onChange={(event) => board.setName(event.target.value)}
-        />
-      </div>
+	return (
+		<main>
+			<div className="flex justify-center mb-8">
+				<Input
+					className="w-full m-auto"
+					classNames={{
+						input: "text-2xl font-medium hover:bg-transparent text-center",
+						inputWrapper: "bg-transparent text-lg font-medium",
+					}}
+					placeholder={"Example: Gif renderer project"}
+					value={name}
+					size="md"
+					onChange={(event) => project.setName(event.target.value)}
+				/>
+			</div>
 
-      <div className={`px-4 overflow-auto flex flex-row flex-nowrap gap-8`}>
-        {columns.map((column) => (
-          <Column
-            key={column.uuid}
-            uuid={column.uuid}
-            name={column.name}
-            onColumnNameChange={board.setColumnName}
-            onTaskAdd={board.addColumnTask}
-            tasks={board.data.tasks.filter((task) => task.stateUUID === column.uuid)}
-          />
-        ))}
+			<div className={`px-4 overflow-auto flex flex-row flex-nowrap gap-8`}>
+				{columns.map((column) => {
+					return (
+						<Column
+							key={column.uuid}
+							uuid={column.uuid}
+							name={column.name}
+							onColumnNameChange={project.setColumnName}
+							onTaskAdd={project.addTask}
+							tasks={project.data.tasks.filter(
+								(task) => task.stateUUID === column.uuid
+							)}
+							isFetching={project.isFetching}
+						/>
+					);
+				})}
 
-        <Button radius='sm' size='md' onClick={addColumnHandler}>
-          + Añade una columna nueva
-        </Button>
-      </div>
-    </main>
-  )
-}
+				<Button
+					radius="sm"
+					size="md"
+					onClick={onOpen}
+				>
+					+ Añade una columna nueva
+				</Button>
+				<Modal
+					isOpen={isOpen}
+					onOpenChange={onOpenChange}
+				>
+					<ModalContent>
+						{(onClose) => (
+							<>
+								<ModalHeader className="flex flex-col gap-1">
+									Añade una columna nueva
+								</ModalHeader>
+								<ModalBody>
+									<Input
+										placeholder="Nombre de columna. Ej: To Do"
+										value={taskStateName}
+										onChange={(ev) => setTaskStateName(ev.target.value)}
+										onKeyUp={(ev) =>
+											ev.key === "Enter" ? handleAddColumn(onClose) : null
+										}
+										autoFocus
+									/>
+								</ModalBody>
+								<ModalFooter>
+									<Button
+										color="danger"
+										variant="light"
+										onPress={onClose}
+									>
+										Cerrar
+									</Button>
+									<Button
+										color="primary"
+										onPress={() => handleAddColumn(onClose)}
+									>
+										Añadir
+									</Button>
+								</ModalFooter>
+							</>
+						)}
+					</ModalContent>
+				</Modal>
+			</div>
+		</main>
+	);
+};
 
-export default Page
+export default Page;

@@ -19,9 +19,7 @@ export default function RootLayout({
 			<IndexPage />
 			<body
 				className={inter.className}
-				style={{
-					minHeight: "100vh",
-				}}
+				style={{ minHeight: "100vh" }}
 			>
 				<Providers>
 					<Navbar />
