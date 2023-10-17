@@ -1,161 +1,142 @@
 import { useDebounce } from "@uidotdev/usehooks";
 import { useEffect, useState, useCallback } from "react";
-import Api, { Project, Task, TaskState } from "src/lib/api";
+import Api, { Project } from "src/lib/api";
+import { RetryableError } from "./errors";
+
+// Este hook debe tener estas responsabilidades:
+// - Manejar la entidad proyecto
+// - Mantener sus datos actualizados
+// - Si una acción de mutación atomica falla, esta devuelve un error con una funcion para volver a intentarlo.
 
 export default function useProject(projectId: number) {
-	const [error, setError] = useState<Error>();
-	const [project, setProject] = useState<Project | undefined>();
-	const [isLoading, setIsLoading] = useState(true);
-	const [isFetching, setIsFetching] = useState(false);
-	const [retryData, setRetryData] = useState<{
-		fn: (...args: any[]) => Promise<void>;
-		params: any[];
-	}>();
-	const debouncedProject = useDebounce(project, 100);
+  const [error, setError] = useState<Error>();
+  const [project, setProject] = useState<Project | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+  const debouncedProject = useDebounce(project, 100);
 
-	const fetchProject = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			const project = await Api.fetchProject(projectId);
-			setProject(project);
-			setIsLoading(false);
-		} catch (error) {
-			setIsLoading(false);
-			setError(error as Error);
-		}
-	}, [projectId]);
+  const fetchProject = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const project = await Api.fetchProject(projectId);
+      setProject(project);
+    } catch (error) {
+      setError(error as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [projectId]);
 
-	useEffect(() => {
-		fetchProject();
-	}, [fetchProject]);
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
-	useEffect(() => {
-		if (!debouncedProject) return;
-		Api.saveProject(debouncedProject);
-	}, [debouncedProject]);
+  useEffect(() => {
+    if (!debouncedProject) return;
+    Api.saveProject(debouncedProject);
+  }, [debouncedProject]);
 
-	function setColumnName(columnUUID: string, name: string) {
-		setProject((project) => {
-			if (project === undefined) return;
+  function setColumnName(columnUUID: string, name: string) {
+    setProject((project) => {
+      if (project === undefined) return;
 
-			const foundState = project.states.find(
-				(state) => state.uuid === columnUUID
-			);
+      const foundState = project.states.find(
+        (state) => state.uuid === columnUUID,
+      );
 
-			if (foundState?.id === undefined) throw new Error("Missing column");
+      if (foundState?.id === undefined) throw new Error("Missing column");
 
-			Api.updateTaskState(project.id, foundState.id, name);
+      Api.updateTaskState(project.id, foundState.id, name);
 
-			const states = project?.states.map((state) =>
-				foundState.id === state.id ? { ...state, name } : state
-			);
+      const states = project?.states.map((state) =>
+        foundState.id === state.id ? { ...state, name } : state,
+      );
 
-			return {
-				...project,
-				states,
-			};
-		});
-	}
+      return {
+        ...project,
+        states,
+      };
+    });
+  }
 
-	function setName(name: string) {
-		Api.updateProjectName((project as Project).id, name);
-		setProject((project) => project && { ...project, name });
-	}
+  function setName(name: string) {
+    Api.updateProjectName((project as Project).id, name);
+    setProject((project) => project && { ...project, name });
+  }
 
-	function addColumn(name: string) {
-		if (!project) return;
+  function addColumn(name: string) {
+    if (!project) return;
 
-		const generatedUUID = crypto.randomUUID();
-		setProject(
-			(project) =>
-				project && {
-					...project,
-					states: [...project.states, { name, uuid: generatedUUID }],
-				}
-		);
+    const generatedUUID = crypto.randomUUID();
+    setProject(
+      (project) =>
+        project && {
+          ...project,
+          states: [...project.states, { name, uuid: generatedUUID }],
+        },
+    );
 
-		Api.createTaskState((project as Project).id, name);
-	}
+    Api.createTaskState((project as Project).id, name);
+  }
 
-	async function addTask(columnUUID: string, name: string) {
-		setIsFetching(true);
-		const state = (project as Project).states.find(
-			(state) => state.uuid === columnUUID
-		);
-		if (!state || !state?.id) throw new Error("Missing state");
-		// debugger;
+  async function addTask(columnUUID: string, name: string, fixedUUID?: string) {
+    const state = (project as Project).states.find(
+      (state) => state.uuid === columnUUID,
+    );
 
-		const generatedUUID = crypto.randomUUID();
-		setProject((project) => {
-			if (!project) return;
-			return {
-				...project,
-				tasks: [
-					...project.tasks,
-					{
-						name,
-						uuid: generatedUUID,
-						stateUUID: columnUUID,
-						stateId: state.id,
-					},
-				],
-			};
-		});
+    if (!state || !state?.id) throw new Error("Missing state");
 
-		const task = await Api.createTask((project as Project).id, state.id, name);
-		console.log("Task from create task", task);
-		// Si la llamada no es satisfactoria, aquí habría que manejar el devolver el proyecto a su estado previo
-		if (task === null) {
-			setProject((project) => {
-				if (!project) return;
-				const tasks = project.tasks.filter(
-					(task) => task.uuid !== generatedUUID
-				);
+    const taskUUID = fixedUUID ?? crypto.randomUUID();
 
-				return {
-					...project,
-					tasks,
-				};
-			});
-			setIsFetching(false);
-			// TODO
-			// setError(new Error("Error creando tarea"));
-			setRetryData({ fn: addTask, params: [columnUUID, name] });
-			return;
-		}
+    if (fixedUUID === undefined) {
+      setProject((project) => {
+        if (!project) return;
+        return {
+          ...project,
+          tasks: [
+            ...project.tasks,
+            {
+              name,
+              uuid: taskUUID,
+              stateUUID: columnUUID,
+              stateId: state.id,
+            },
+          ],
+        };
+      });
+    }
 
-		setProject((project) => {
-			if (!project) return;
-			const tasks = project?.tasks.map((task) =>
-				task.uuid === generatedUUID ? { ...task, id: task.id } : task
-			);
-			return {
-				...project,
-				tasks,
-			};
-		});
-		setIsFetching(false);
-	}
+    async function create() {
+      return await Api.createTask(
+        (project as Project).id,
+        (state as any).id,
+        name,
+      );
+    }
 
-	function removeError() {
-		setError(undefined);
-	}
+    try {
+      const createdTask = await create();
 
-	function retryCall() {
-		if (!retryData) throw new Error("Missing retry call information");
-		retryData.fn(...retryData.params);
-	}
+      setProject((project) => {
+        if (!project) return;
 
-	return {
-		data: project as Project,
-		error,
-		isLoading,
-		isFetching,
-		setColumnName,
-		setName,
-		addColumn,
-		addTask,
-		removeError,
-		retryCall,
-	};
+        const tasks = project.tasks.map((task) =>
+          task.uuid === taskUUID ? { ...task, id: createdTask.id } : task,
+        );
+
+        return { ...project, tasks };
+      });
+    } catch (error) {
+      throw new RetryableError(create);
+    }
+  }
+
+  return {
+    data: project as Project,
+    error,
+    isLoading,
+    setColumnName,
+    setName,
+    addColumn,
+    addTask,
+  };
 }
