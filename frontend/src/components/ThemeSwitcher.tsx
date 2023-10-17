@@ -7,42 +7,42 @@ import LightThemeLogo from "@/public/sun.svg";
 import DarkThemeLogo from "@/public/moon.svg";
 
 export function ThemeSwitcher() {
-	const [mounted, setMounted] = useState(false);
-	const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-	if (!mounted) return null;
-	if (!theme) return null;
+  if (!mounted) return null;
+  if (!theme) return null;
 
-	function changeTheme() {
-		setTheme(theme === "light" ? "dark" : "light");
-	}
+  function changeTheme() {
+    setTheme(theme === "light" ? "dark" : "light");
+  }
 
-	const themeInformation = {
-		light: {
-			alt: "Theme switcher icon - Light mode",
-			src: LightThemeLogo,
-		},
-		dark: {
-			alt: "Theme switcher icon - Dark mode",
-			src: DarkThemeLogo,
-		},
-	};
+  const themeInformation = {
+    light: {
+      alt: "Theme switcher icon - Light mode",
+      src: LightThemeLogo,
+    },
+    dark: {
+      alt: "Theme switcher icon - Dark mode",
+      src: DarkThemeLogo,
+    },
+  };
 
-	return (
-		<div>
-			<button onClick={() => changeTheme()}>
-				{/* TODO Fix this type issue */}
-				<Image
-					src={themeInformation[theme].src}
-					alt={themeInformation[theme].alt}
-					height="50"
-					width="50"
-				/>
-			</button>
-		</div>
-	);
+  return (
+    <div>
+      <button onClick={() => changeTheme()}>
+        {/* TODO Fix this type issue */}
+        <Image
+          src={themeInformation[theme].src}
+          alt={themeInformation[theme].alt}
+          height="50"
+          width="50"
+        />
+      </button>
+    </div>
+  );
 }

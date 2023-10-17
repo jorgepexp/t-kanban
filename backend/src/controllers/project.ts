@@ -124,6 +124,7 @@ const ProjectController = {
 
     res.status(200).send(task);
   },
+
   async updateTask(req: Request, res: Response) {
     const projectId = Number(req.params.id);
     const stateId = Number(req.params.stateId);
