@@ -10,7 +10,11 @@ import {
 	ModalBody,
 	ModalFooter,
 	useDisclosure,
+	Card,
+	CardBody,
+	CardFooter,
 } from "@nextui-org/react";
+import { BiErrorAlt } from "react-icons/bi";
 import { useState } from "react";
 import useProject from "src/hooks/useProject";
 
@@ -19,15 +23,28 @@ const Page = () => {
 	const project = useProject(1);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [taskStateName, setTaskStateName] = useState("");
+	const [isErrorWindowOpen, setIsErrorWindowOpen] = useState(false);
+	const [isRetryingCall, setIsRetryingCall] = useState(false);
 
 	if (project.isLoading) return <p>Loading...</p>;
 
-	if (project.error) return <p>Error loading project</p>;
+	if (project.error) {
+		// if (isErrorWindowOpen) setIsRetryingCall(false);
+		if (!isErrorWindowOpen) {
+			setIsErrorWindowOpen(true);
+		}
+
+		return <p>Ha habido un error</p>;
+	}
 
 	function handleAddColumn(closeModalHandler: () => void) {
 		project.addColumn(taskStateName);
 		closeModalHandler();
-		setTaskStateName("");
+	}
+
+	function retryCall() {
+		setIsRetryingCall(true);
+		project.retryCall();
 	}
 
 	const { name, states: columns } = project.data;
@@ -75,6 +92,7 @@ const Page = () => {
 				<Modal
 					isOpen={isOpen}
 					onOpenChange={onOpenChange}
+					onClose={() => setTaskStateName("")}
 				>
 					<ModalContent>
 						{(onClose) => (
@@ -113,6 +131,42 @@ const Page = () => {
 					</ModalContent>
 				</Modal>
 			</div>
+
+			{isErrorWindowOpen && (
+				<Card className="w-[200px] absolute bottom-3 right-3">
+					<CardBody>
+						{!isRetryingCall ? (
+							<p className="flex items-center">
+								<BiErrorAlt className="text-red-500 text-xl" />
+								&nbsp; Algo ha ido mal :(
+							</p>
+						) : (
+							<p>Reintentando...</p>
+						)}
+					</CardBody>
+					<CardFooter>
+						<Button
+							className="ml-auto"
+							radius="sm"
+							size="md"
+							onClick={() => {
+								project.removeError();
+								setIsErrorWindowOpen(false);
+							}}
+						>
+							Dismiss
+						</Button>
+						<Button
+							className="ml-auto"
+							radius="sm"
+							size="md"
+							onClick={() => retryCall()}
+						>
+							Retry
+						</Button>
+					</CardFooter>
+				</Card>
+			)}
 		</main>
 	);
 };

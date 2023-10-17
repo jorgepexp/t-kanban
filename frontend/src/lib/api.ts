@@ -32,6 +32,7 @@ const Api = {
 	async fetchProject(id: number): Promise<Project> {
 		const response = await fetch(`${BASE_URL}/api/projects/${id}`);
 
+		console.log("Is response ok?", response.ok);
 		const json: Project = await response.json();
 
 		json.uuid = crypto.randomUUID();
@@ -45,8 +46,6 @@ const Api = {
 			stateUUID: json.states.find((state) => state.id === task.stateId)
 				?.uuid as string,
 		}));
-
-		console.log("Fetched project", json);
 
 		return json;
 	},
@@ -92,7 +91,17 @@ const Api = {
 		return response;
 	},
 
-	async createTask(projectId: number, stateId: number, name: string) {
+	async createTask(
+		projectId: number,
+		stateId: number,
+		name: string
+	): Promise<Task | null> {
+		// TODO Remember to remove
+		const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
+		await sleep(2000);
+
+		return null;
+
 		const response = await fetch(`${BASE_URL}/api/projects/${projectId}/task`, {
 			method: "POST",
 			headers: {
@@ -101,7 +110,9 @@ const Api = {
 			body: JSON.stringify({ name, stateId }),
 		});
 
-		return response;
+		if (response.status === 200) return (await response.json()) as Task;
+
+		return null;
 	},
 };
 
