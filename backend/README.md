@@ -1,17 +1,12 @@
 # backend
 
-## Crear una migración
+## Create a migration
 
-Despues de editar el schema de prisma, lanzamos:
+After editing prisma schema, run migrations with: 
 
 ```bash
-yarn prisma migrate dev --name <nombre declarativo>
+yarn prisma migrate dev --name <declarative-name>
 
-# Ejemplo:
+# Example:
 yarn prisma migrate dev --name add-comment-relation
 ```
-
-## Next steps
-
-- [ ] Hacer el put
-- [ ] Conectar el back y el front, actualizando projects (con sus tareas y demas). No avanzar más el front.
