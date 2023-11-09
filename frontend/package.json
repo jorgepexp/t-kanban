@@ -10,11 +10,13 @@
     "style": "prettier -w ./src"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@iconscout/react-unicons": "^2.0.2",
     "@nextui-org/react": "^2.1.10",
     "@uidotdev/usehooks": "^2.2.0",
+    "clsx": "^2.0.0",
     "framer-motion": "^10.16.4",
-    "next": "13.4.19",
+    "next": "^14.0.1",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
