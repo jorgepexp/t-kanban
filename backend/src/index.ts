@@ -16,6 +16,7 @@ const asyncHandler =
 
 // Project routes
 app.get('/api/projects/:id', asyncHandler(ProjectController.getProject));
+app.get('/api/projects', asyncHandler(ProjectController.getAllProjects));
 app.post('/api/projects', ProjectController.createProject);
 app.put('/api/projects/:id', asyncHandler(ProjectController.updateProjectName));
 app.delete('/api/projects/:id', asyncHandler(ProjectController.deleteProject));

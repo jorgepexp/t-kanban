@@ -43,6 +43,12 @@ const ProjectController = {
 
     res.status(200).send(project);
   },
+
+  async getAllProjects(req: Request, res: Response) {
+    const projects = await prisma.project.findMany();
+    res.status(200).send(projects);
+  },
+
   async updateProjectName(req: Request, res: Response) {
     const id = Number(req.params.id);
     const project = await prisma.project.update({
@@ -124,7 +130,6 @@ const ProjectController = {
 
     res.status(200).send(task);
   },
-
   async updateTask(req: Request, res: Response) {
     const projectId = Number(req.params.id);
     const stateId = Number(req.params.stateId);
