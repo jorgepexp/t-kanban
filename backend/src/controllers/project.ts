@@ -6,19 +6,19 @@ const prisma = new PrismaClient();
 
 class ProjectNotFound extends HTTPException {
   constructor(id: number) {
-    super(`Board with id ${id} not found.`, 404);
+    super(`Project with id ${id} not found.`, 404);
   }
 }
 
 const ProjectController = {
   async createProject(req: Request, res: Response) {
-    const board = await prisma.project.create({
+    const project = await prisma.project.create({
       data: {
         name: req.body.name,
       },
     });
 
-    res.send(board);
+    res.send(project);
   },
   async getProject(req: Request, res: Response) {
     const id = Number(req.params.id);

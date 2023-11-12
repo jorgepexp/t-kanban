@@ -1,15 +1,15 @@
 _type: export
 __export_format: 4
-__export_date: 2023-09-21T16:28:32.886Z
+__export_date: 2023-11-12T21:08:29.360Z
 __export_source: insomnia.desktop.app:v2023.5.8
 resources:
-  - _id: req_aefa1beeeb334bb1ab1b89e153a32ccd
-    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
-    modified: 1695313642965
-    created: 1695313626454
-    url: http://localhost:3001/board/1
-    name: Get board
-    description: ""
+  - _id: req_6033ff6a0cf349109151167c93ea9966
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1698337324051
+    created: 1698337298135
+    url: http://localhost:3001/api/projects
+    name: Get all Projects
+    description: ''
     method: GET
     body: {}
     parameters: []
@@ -17,7 +17,7 @@ resources:
       - name: User-Agent
         value: insomnia/2023.5.8
     authentication: {}
-    metaSortKey: -1695313626454
+    metaSortKey: -1698337298135
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -26,29 +26,59 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+  - _id: wrk_1ce0b142c44d4b8e934c821a9aef3273
     parentId: null
-    modified: 1695311918285
-    created: 1695311918285
+    modified: 1695354003639
+    created: 1695354003639
     name: t-kanban api
-    description: ""
+    description: ''
     scope: collection
     _type: workspace
-  - _id: req_992b4c19496f4d90b91f8f3c94f3fe95
-    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
-    modified: 1695313671896
-    created: 1695313646053
-    url: http://localhost:3001/board/1
-    name: Update board
-    description: ""
-    method: PUT
+  - _id: req_1924e50abe1f48f194ec2bdb5c6d94a1
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1699645523321
+    created: 1695604594843
+    url: http://localhost:3001/api/projects
+    name: Create Project
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "ASidbasbd"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1696439347303
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_1fc34412203a453fb3e284e972ef4e4a
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696439911157
+    created: 1695313626454
+    url: http://localhost:3001/api/projects/1
+    name: Get Project
+    description: ''
+    method: GET
     body: {}
     parameters: []
     headers:
       - name: User-Agent
         value: insomnia/2023.5.8
     authentication: {}
-    metaSortKey: -1695313626354
+    metaSortKey: -1696439347253
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -57,8 +87,207 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: env_e09e4d0db84bdfd6b5390e12cbaaebad21c155aa
-    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+  - _id: req_af6c3e68bd5a4f4e945be07f6ec230a9
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696439889403
+    created: 1696439347203
+    url: http://localhost:3001/api/projects/2
+    name: Delete Project
+    description: ''
+    method: DELETE
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1696439347203
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_467e56689710445c987fab69b88b6981
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1695875029900
+    created: 1695313646053
+    url: http://localhost:3001/api/projects/8685865
+    name: Update project name
+    description: ''
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Nuevo nombre de tablero"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004453
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_af10f7758b8c47ac8b63e80c41c9b428
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696453015116
+    created: 1695875004403
+    url: http://localhost:3001/api/projects/1/states
+    name: Create State
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Nombre de estado 2"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004403
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_e9416bb2024d445db39bd77dcd2797cc
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696439928081
+    created: 1696100870332
+    url: http://localhost:3001/api/projects/1/states
+    name: Update State
+    description: ''
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"id": 1,
+        	"name": "Updated state name"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004353
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_69d9a1d1f9654088875250bd67aea79a
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696453340377
+    created: 1696439934084
+    url: http://localhost:3001/api/projects/states/5
+    name: Delete State
+    description: ''
+    method: DELETE
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004328
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_13ec9177c42e4e46b0c2e0f1394cf8a6
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696453027431
+    created: 1696094527779
+    url: http://localhost:3001/api/projects/1/task
+    name: Create Task
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Nueva tarea ¡asdaisjbdiaksjbd",
+        	"stateId": 1
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004303
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_1907b8f34ad34038911f61cc2af9e97c
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
+    modified: 1696453033466
+    created: 1696095463429
+    url: http://localhost:3001/api/projects/1/states/1
+    name: Update Task
+    description: ''
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"taskId": 1,
+        	"name": "Nuevo nombre de tarea"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/2023.5.8
+    authentication: {}
+    metaSortKey: -1695875004203
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_468daf5cdac44c89b18e1c1c0802f827
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
     modified: 1695311918289
     created: 1695311918289
     name: Base Environment
@@ -68,8 +297,8 @@ resources:
     isPrivate: false
     metaSortKey: 1695311918289
     _type: environment
-  - _id: jar_e09e4d0db84bdfd6b5390e12cbaaebad21c155aa
-    parentId: wrk_4214f1a98b7c4be380ffaddd49a2e2b9
+  - _id: jar_599761b29b5243f582230912c93c18c3
+    parentId: wrk_1ce0b142c44d4b8e934c821a9aef3273
     modified: 1695311918289
     created: 1695311918289
     name: Default Jar
