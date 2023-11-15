@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
-    "@iconscout/react-unicons": "^2.0.2",
     "@nextui-org/react": "^2.1.10",
     "@uidotdev/usehooks": "^2.2.0",
     "clsx": "^2.0.0",
