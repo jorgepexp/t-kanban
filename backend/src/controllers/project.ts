@@ -45,7 +45,11 @@ const ProjectController = {
   },
 
   async getAllProjects(req: Request, res: Response) {
-    const projects = await prisma.project.findMany();
+    const projects = await prisma.project.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
     res.status(200).send(projects);
   },
 
