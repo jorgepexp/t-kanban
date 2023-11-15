@@ -1,5 +1,8 @@
-"use client";
+import { Metadata } from 'next';
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: 'tKanban',
+};
+export default function Page() {
   return <main>Home page</main>;
 }
