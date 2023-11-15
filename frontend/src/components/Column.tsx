@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { TaskState, Task } from "src/lib/api";
+import { TaskState, Task as TaskType } from 'src/lib/definitions';
 import {
   Button,
   Input,
@@ -10,35 +10,36 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/react";
-import { useState } from "react";
-import { RetryableError } from "src/hooks/errors";
+} from '@nextui-org/react';
+import { useState } from 'react';
+import { RetryableError } from 'src/hooks/errors';
+import Task from './task';
 
 type ColumnProps = TaskState & {
   onColumnNameChange: (id: string, name: string) => void;
   onTaskAdd: (id: string, name: string) => Promise<void>;
-  tasks: Task[];
+  tasks: TaskType[];
+  handleCreationError: (error: RetryableError) => void;
 };
 
-const COLUMN_WIDTH = "200px";
-const COLUMN_HEIGHT = "250px";
+const COLUMN_WIDTH = '200px';
+const COLUMN_HEIGHT = '250px';
 
-function Column(props: ColumnProps) {
+export default function Column(props: ColumnProps) {
   function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
     props.onColumnNameChange(props.uuid, event.target.value);
   }
+  const [taskName, setTaskName] = useState('');
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [taskName, setTaskName] = useState("");
-  const [taskCreateError, setTaskCreateError] = useState<RetryableError>();
 
   async function handleAddTask() {
     try {
       onClose();
-      setTaskName("");
+      setTaskName('');
       await props.onTaskAdd(props.uuid, taskName);
     } catch (error) {
       if (error instanceof RetryableError) {
-        return setTaskCreateError(error);
+        return props.handleCreationError(error);
       }
 
       throw error;
@@ -61,34 +62,24 @@ function Column(props: ColumnProps) {
       <ul className="flex flex-col gap-2">
         {props.tasks.map((task) => {
           return (
-            <div
-              className={
-                task.id === undefined
-                  ? "bg-stone-500 rounded-sm p-1 hover:bg-stone-700"
-                  : "bg-sky-900 rounded-sm p-1 hover:bg-sky-800 cursor-pointer"
-              }
+            <Task
+              id={task.id}
+              uuid={task.uuid}
+              name={task.name}
               key={task.uuid}
-            >
-              <li>{task.name}</li>
-            </div>
+            />
           );
         })}
       </ul>
 
-      <Button variant="ghost" onClick={onOpen} className="mt-2">
+      <Button
+        variant="ghost"
+        onClick={onOpen}
+        className="mt-2"
+        isDisabled={props.id === undefined}
+      >
         + Añadir tarea
       </Button>
-
-      {taskCreateError && (
-        <button
-          onClick={async () => {
-            await taskCreateError.retry();
-            setTaskCreateError(undefined);
-          }}
-        >
-          Retry
-        </button>
-      )}
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
@@ -101,7 +92,7 @@ function Column(props: ColumnProps) {
                 placeholder="Nombre de la tarea. Ej: Tender la ropa"
                 value={taskName}
                 onChange={(ev) => setTaskName(ev.target.value)}
-                onKeyUp={(ev) => (ev.key === "Enter" ? handleAddTask() : null)}
+                onKeyUp={(ev) => (ev.key === 'Enter' ? handleAddTask() : null)}
                 autoFocus
               />
             </ModalBody>
@@ -109,7 +100,7 @@ function Column(props: ColumnProps) {
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancelar
               </Button>
-              <Button color="primary" onPress={() => handleAddTask()}>
+              <Button color="primary" onPress={handleAddTask}>
                 Crear
               </Button>
             </ModalFooter>
@@ -119,5 +110,3 @@ function Column(props: ColumnProps) {
     </div>
   );
 }
-
-export default Column;

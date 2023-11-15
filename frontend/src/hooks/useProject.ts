@@ -1,7 +1,8 @@
-import { useDebounce } from "@uidotdev/usehooks";
-import { useEffect, useState, useCallback } from "react";
-import Api, { Project } from "src/lib/api";
-import { RetryableError } from "./errors";
+import { useDebounce } from '@uidotdev/usehooks';
+import { useEffect, useState, useCallback } from 'react';
+import Api from 'src/lib/api';
+import { Project } from 'src/lib/definitions';
+import { RetryableError } from './errors';
 
 // Este hook debe tener estas responsabilidades:
 // - Manejar la entidad proyecto
@@ -40,15 +41,14 @@ export default function useProject(projectId: number) {
       if (project === undefined) return;
 
       const foundState = project.states.find(
-        (state) => state.uuid === columnUUID,
+        (state) => state.uuid === columnUUID
       );
-
-      if (foundState?.id === undefined) throw new Error("Missing column");
+      if (foundState?.id === undefined) throw new Error('Missing column ID');
 
       Api.updateTaskState(project.id, foundState.id, name);
 
       const states = project?.states.map((state) =>
-        foundState.id === state.id ? { ...state, name } : state,
+        foundState.id === state.id ? { ...state, name } : state
       );
 
       return {
@@ -63,27 +63,43 @@ export default function useProject(projectId: number) {
     setProject((project) => project && { ...project, name });
   }
 
-  function addColumn(name: string) {
+  async function addColumn(name: string) {
     if (!project) return;
 
-    const generatedUUID = crypto.randomUUID();
+    const columnUUID = crypto.randomUUID();
     setProject(
       (project) =>
         project && {
           ...project,
-          states: [...project.states, { name, uuid: generatedUUID }],
-        },
+          states: [...project.states, { name, uuid: columnUUID }],
+        }
     );
 
-    Api.createTaskState((project as Project).id, name);
+    async function create() {
+      return await Api.createTaskState((project as Project).id, name);
+    }
+
+    try {
+      const createdColumn = await create();
+      setProject((project) => {
+        if (!project) return;
+        debugger;
+        const states = project.states.map((state) =>
+          state.uuid === columnUUID ? { ...state, id: createdColumn.id } : state
+        );
+
+        return { ...project, states };
+      });
+    } catch (error) {
+      throw new RetryableError(create);
+    }
   }
 
   async function addTask(columnUUID: string, name: string, fixedUUID?: string) {
     const state = (project as Project).states.find(
-      (state) => state.uuid === columnUUID,
+      (state) => state.uuid === columnUUID
     );
-
-    if (!state || !state?.id) throw new Error("Missing state");
+    if (!state || !state?.id) throw new Error('Missing state');
 
     const taskUUID = fixedUUID ?? crypto.randomUUID();
 
@@ -109,18 +125,17 @@ export default function useProject(projectId: number) {
       return await Api.createTask(
         (project as Project).id,
         (state as any).id,
-        name,
+        name
       );
     }
 
     try {
       const createdTask = await create();
-
       setProject((project) => {
         if (!project) return;
 
         const tasks = project.tasks.map((task) =>
-          task.uuid === taskUUID ? { ...task, id: createdTask.id } : task,
+          task.uuid === taskUUID ? { ...task, id: createdTask.id } : task
         );
 
         return { ...project, tasks };

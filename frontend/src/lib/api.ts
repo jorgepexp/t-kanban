@@ -1,37 +1,29 @@
-export type Project = {
-  id: number;
-  uuid: string;
-  name: string;
-  tasks: Task[];
-  states: TaskState[];
-};
+import { Project, Task, TaskState } from './definitions';
 
-export type Task = {
-  id?: number;
-  uuid: string;
-  name: string;
-  stateUUID: string;
-  stateId?: number;
-};
-
-export type TaskState = {
-  id?: number;
-  uuid: string;
-  name: string;
-};
-
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = 'http://localhost:3001';
 
 const Api = {
   async createProject(name: string) {
-    await fetch(`http://localhost:3001/api/projects/`, {
-      method: "POST",
+    const response = await fetch(`http://localhost:3001/api/projects/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
+    const json = await response.json();
+
+    if (response.status === 200) {
+      const { id } = json;
+      Promise.all([
+        this.createTaskState(id, 'To do'),
+        this.createTaskState(id, 'Doing'),
+        this.createTaskState(id, 'Done'),
+      ]);
+    }
+
+    return json as Project;
   },
   async fetchProject(id: number): Promise<Project> {
     const response = await fetch(`${BASE_URL}/api/projects/${id}`);
-
     const json: Project = await response.json();
 
     json.uuid = crypto.randomUUID();
@@ -48,57 +40,58 @@ const Api = {
 
     return json;
   },
-  async saveProject(project: Project) {
-    const updatedProject = await fetch(
-      `${BASE_URL}/api/projects/${project.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(project),
-      },
-    );
+  async fetchAllProjects(): Promise<Project[]> {
+    const response = await fetch(`${BASE_URL}/api/projects`);
+    const json = await response.json();
 
-    return updatedProject.json();
+    return json as Project[];
+  },
+  async saveProject(project: Project) {
+    await fetch(`${BASE_URL}/api/projects/${project.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(project),
+    });
   },
   async updateProjectName(projectId: number, name: string) {
     await fetch(`${BASE_URL}/api/projects/${projectId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
   },
 
   async createTaskState(projectId: number, name: string) {
-    await fetch(`${BASE_URL}/api/projects/${projectId}/states`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
-  },
-  async updateTaskState(projectId: number, stateId: number, name: string) {
     const response = await fetch(
       `${BASE_URL}/api/projects/${projectId}/states`,
       {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, id: stateId }),
-      },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      }
     );
-
-    return response;
+    const json = await response.json();
+    return json as TaskState;
+  },
+  async updateTaskState(projectId: number, stateId: number, name: string) {
+    await fetch(`${BASE_URL}/api/projects/${projectId}/states`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, id: stateId }),
+    });
   },
 
   async createTask(
     projectId: number,
     stateId: number,
-    name: string,
+    name: string
   ): Promise<Task> {
     const response = await fetch(`${BASE_URL}/api/projects/${projectId}/task`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name, stateId }),
     });
