@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React from "react";
+import React, { useState } from 'react';
 import {
   Navbar,
   NavbarBrand,
@@ -8,29 +8,37 @@ import {
   NavbarItem,
   Link,
   Button,
-} from "@nextui-org/react";
+} from '@nextui-org/react';
+
+import { CreateProjectModal } from './modals';
 
 export default function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <Navbar className="border-b-1 border-indigo-950 mb-5 bg-indigo-900">
       <NavbarBrand>
         <Link
           color="foreground"
           href="/"
-          className="font-bold text-inherit text-xl "
+          className="font-bold text-inherit text-xl"
         >
           tKanban
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem isActive>
-          <Link color="foreground" href="boards">
-            Tableros
+          <Link color="foreground" href="/projects">
+            Proyectos
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Button color="secondary" variant="ghost">
-            + Añade un tablero
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => setIsModalOpen(true)}
+          >
+            + Añade un proyecto
           </Button>
         </NavbarItem>
       </NavbarContent>
@@ -44,6 +52,11 @@ export default function App() {
           </Button>
         </NavbarItem>
       </NavbarContent>
+
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)}
+      />
     </Navbar>
   );
 }
