@@ -10,6 +10,8 @@ npm install
 yarn
 ```
 
+_Optional_ The project uses Docker, so if you're using Windows and haven't installed WSL I recommend you to do so
+
 Setup database in backend
 ```bash
 npm run up-db
