@@ -18,6 +18,7 @@ import { BiErrorAlt } from 'react-icons/bi';
 import { useState } from 'react';
 import useProject from 'src/hooks/useProject';
 import { RetryableError } from 'src/hooks/errors';
+import { AddColumnButton } from '@/components/buttons';
 
 type Params = {
   params: {
@@ -89,9 +90,7 @@ const Page = ({ params }: Params) => {
           );
         })}
 
-        <Button radius="sm" size="md" onClick={onOpen}>
-          + Añade una columna nueva
-        </Button>
+        <AddColumnButton openHandler={onOpen} />
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
