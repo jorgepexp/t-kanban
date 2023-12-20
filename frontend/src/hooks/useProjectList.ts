@@ -3,27 +3,21 @@
 import { useEffect, useState, useCallback } from 'react';
 import Api from 'src/lib/api';
 import { Project } from 'src/lib/definitions';
-import { unstable_noStore as noStore } from 'next/cache';
 
 // Este hook debe tener estas responsabilidades:
 // - Manejar el cómputo de proyectos
 // - Mantener sus datos actualizados
 
-export default function useProjects() {
+export default function useProjectList() {
   const [error, setError] = useState<Error>();
-  const [projects, setProjects] = useState<Project[] | undefined>();
+  const [projectList, setProjectList] = useState<Project[] | undefined>();
   const [areLoading, setAreLoading] = useState(true);
 
   const fetchProjects = useCallback(async () => {
-    noStore();
     try {
-      // TODO Remember to remove
-      // console.log('Fetching data...');
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
       setAreLoading(true);
       const allProjects = await Api.fetchAllProjects();
-      // console.log('Fetching complete');
-      setProjects(allProjects);
+      setProjectList(allProjects);
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -36,9 +30,8 @@ export default function useProjects() {
   }, [fetchProjects]);
 
   async function createProject(name: string) {
-    noStore();
     const createdProject = await Api.createProject(name);
-    setProjects((projects) => {
+    setProjectList((projects) => {
       return (
         projects && [
           ...projects,
@@ -57,7 +50,7 @@ export default function useProjects() {
   }
 
   return {
-    data: projects as Project[],
+    data: projectList as Project[],
     error,
     areLoading,
     createProject,

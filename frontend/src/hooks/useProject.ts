@@ -76,14 +76,28 @@ export default function useProject(projectId: number) {
     );
 
     async function create() {
-      return await Api.createTaskState((project as Project).id, name);
+      const response = await Api.createTaskState((project as Project).id, name);
+      if (response?.id) {
+        setProject((project) => {
+          if (!project) return;
+          const states = project.states.map((state) =>
+            state.uuid === columnUUID ? { ...state, id: response.id } : state
+          );
+
+          return { ...project, states };
+        });
+
+        return response;
+      }
+      return null;
     }
 
     try {
       const createdColumn = await create();
+      if (!createdColumn) throw new RetryableError(create);
+
       setProject((project) => {
         if (!project) return;
-        debugger;
         const states = project.states.map((state) =>
           state.uuid === columnUUID ? { ...state, id: createdColumn.id } : state
         );
