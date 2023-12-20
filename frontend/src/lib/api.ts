@@ -13,11 +13,10 @@ const Api = {
 
     if (response.status === 200) {
       const { id } = json;
-      Promise.all([
-        this.createTaskState(id, 'To do'),
-        this.createTaskState(id, 'Doing'),
-        this.createTaskState(id, 'Done'),
-      ]);
+      // We need to create this in order so that's why we're not using Promise.all or similar
+      await this.createTaskState(id, 'To do');
+      await this.createTaskState(id, 'Doing');
+      await this.createTaskState(id, 'Done');
     }
 
     return json as Project;
@@ -62,16 +61,23 @@ const Api = {
   },
 
   async createTaskState(projectId: number, name: string) {
-    const response = await fetch(
-      `${BASE_URL}/api/projects/${projectId}/states`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      }
-    );
-    const json = await response.json();
-    return json as TaskState;
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/projects/${projectId}/states`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name }),
+        }
+      );
+      const json = await response.json();
+
+      if (response.status === 200) {
+        return json as TaskState;
+      } else throw new Error(`${json.message}`);
+    } catch (error) {
+      throw new Error(`Failed to create task state: ${error}`);
+    }
   },
   async updateTaskState(projectId: number, stateId: number, name: string) {
     await fetch(`${BASE_URL}/api/projects/${projectId}/states`, {
