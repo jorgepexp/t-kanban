@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react';
 import { useState } from 'react';
 import { useDisclosure } from '@nextui-org/react';
-import useProjects from 'src/hooks/useProjects';
+import useProjectList from 'src/hooks/useProjectList';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
@@ -23,7 +23,7 @@ type Props = {
 export function CreateProjectModal(props: Props) {
   const { onOpenChange } = useDisclosure();
   const [projectName, setProjectName] = useState('');
-  const project = useProjects();
+  const project = useProjectList();
   const router = useRouter();
   const [isInvalid, setIsInvalid] = useState(false);
 

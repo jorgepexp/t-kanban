@@ -1,27 +1,26 @@
-import ProjectsDashboard from '@/components/projectsDashboard';
-import { Suspense } from 'react';
+'use client';
 
-const Page = () => {
+import Project from '@/components/project';
+import { Divider } from '@nextui-org/react';
+import useProjectList from 'src/hooks/useProjectList';
+
+export default function ProjectsDashboard() {
+  const projects = useProjectList();
+
+  if (projects.areLoading) return <p>Loading...</p>;
+  if (projects.error) return <p>Ha habido un error</p>;
+
+  const data = projects.data;
+
   return (
-    <>
-      <Suspense fallback={<ProjectsDashboardSekeleton />}>
-        <ProjectsDashboard />
-      </Suspense>
-
-      {/* <div className="flex justify-center items-center gap-4 flex-col">
-        <div>Esto podría ser otro componente</div>
-      </div> */}
-    </>
-  );
-};
-
-// TODO Move to its own file
-function ProjectsDashboardSekeleton() {
-  return (
-    <>
-      <div>Cargando...</div>
-    </>
+    <main className="px-4">
+      <h2 className="text-xl">Tus proyectos</h2>
+      <Divider className="mb-4 mt-1" />
+      <ul className="flex flex-row gap-10">
+        {data.map((project) => {
+          return <Project key={project.id} data={project} />;
+        })}
+      </ul>
+    </main>
   );
 }
-
-export default Page;
